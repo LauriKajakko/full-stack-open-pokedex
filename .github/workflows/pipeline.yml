@@ -33,7 +33,7 @@ jobs:
       - name: deploy to heroku
         env:
             COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
-        if: ${{ !contains(join($COMMIT_MESSAGES), '#skip') && github.event_name == 'push' }}
+        if: ${{github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip') }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
@@ -44,10 +44,8 @@ jobs:
           rollbackonhealthcheckfailed: true
       - uses: actions/checkout@v2
       - name: Bump version and push tag
-        env:
-            COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
         uses: anothrNick/github-tag-action@1.33.0
-        if: ${{ !contains(join($COMMIT_MESSAGES), '#skip') && github.event_name == 'push' }}
+        if: ${{github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
