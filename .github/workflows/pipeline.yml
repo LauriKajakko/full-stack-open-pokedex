@@ -31,7 +31,9 @@ jobs:
           start: npm run start-prod
           wait-on: http://localhost:5000
       - name: deploy to heroku
-        if: ${{ !contains(join(github.event.commits.*.message), \#skip) }}
+        env:
+            COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
+        if: contains(join(COMMIT_MESSAGES), '#skip')
         if: ${{ github.event_name == 'push' }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
@@ -43,8 +45,10 @@ jobs:
           rollbackonhealthcheckfailed: true
       - uses: actions/checkout@v2
       - name: Bump version and push tag
+        env:
+            COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
         uses: anothrNick/github-tag-action@1.33.0
-        if: ${{ !contains(join(github.event.commits.*.message), \#skip) }}
+        if: contains(join(COMMIT_MESSAGES), '#skip')
         if: ${{ github.event_name == 'push' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
