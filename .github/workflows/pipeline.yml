@@ -33,8 +33,7 @@ jobs:
       - name: deploy to heroku
         env:
             COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
-        if: contains(join(COMMIT_MESSAGES), '#skip')
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ !contains(join($COMMIT_MESSAGES), '#skip') && github.event_name == 'push' }}
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
@@ -48,8 +47,7 @@ jobs:
         env:
             COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
         uses: anothrNick/github-tag-action@1.33.0
-        if: contains(join(COMMIT_MESSAGES), '#skip')
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ !contains(join($COMMIT_MESSAGES), '#skip') && github.event_name == 'push' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
