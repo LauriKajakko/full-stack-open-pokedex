@@ -1,6 +1,11 @@
 
 name: Scheduled healthcheck
 
+
+on:
+  push:
+    branches:
+      - master
 on:
   schedule:
     - cron: '0 0 * * 0'
